@@ -120,17 +120,38 @@ async def create_project(
         db.refresh(project)
         
         # Run analysis
-        analysis_result = seo_engine.analyze_keyword(keyword)
+        analysis_result = seo_engine.run_full_analysis(keyword)
+        
+        # Check if analysis was successful
+        if analysis_result.get('status') != 'completed':
+            raise HTTPException(status_code=500, detail=f"Analysis failed: {analysis_result.get('error', 'Unknown error')}")
+        
+        # Get analysis data with fallbacks
+        serp_results = analysis_result.get('serp_results', [])
+        entities = analysis_result.get('analysis', {}).get('entities', [])
+        tfidf_keywords = analysis_result.get('analysis', {}).get('tfidf_keywords', [])
+        content_outline = analysis_result.get('content_outline', '')
+        schema_markup = analysis_result.get('schema_markup', '')
+        
+        # Provide fallback data if analysis is empty
+        if not entities:
+            entities = [{"text": keyword, "label": "TOPIC"}]
+        if not tfidf_keywords:
+            tfidf_keywords = [{"keyword": keyword, "score": 1.0}]
+        if not content_outline:
+            content_outline = f"# {keyword.title()}\n\n## Introduction\n\n## Main Content\n\n## Conclusion"
+        if not schema_markup:
+            schema_markup = '{"@context": "https://schema.org", "@type": "Article", "headline": "' + keyword + '"}'
         
         # Save analysis
         analysis = Analysis(
             project_id=project.id,
-            serp_results=analysis_result.get('serp_results', []),
-            entities=analysis_result.get('entities', []),
-            tfidf_keywords=analysis_result.get('tfidf_keywords', []),
-            competitor_urls=analysis_result.get('competitor_urls', []),
-            content_outline=analysis_result.get('content_outline', ''),
-            schema_markup=analysis_result.get('schema_markup', '')
+            serp_results=serp_results,
+            entities=entities,
+            tfidf_keywords=tfidf_keywords,
+            competitor_urls=serp_results,  # Use SERP results as competitor URLs
+            content_outline=content_outline,
+            schema_markup=schema_markup
         )
         
         db.add(analysis)
