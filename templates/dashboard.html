@@ -1,0 +1,215 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard - SEO Content Generator{% endblock %}
+
+{% block content %}
+<div class="min-h-screen bg-gray-50">
+    <!-- Header -->
+    <div class="bg-white shadow">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+            <div class="flex items-center justify-between">
+                <div>
+                    <h1 class="text-3xl font-bold text-gray-900">Welcome back, {{ user.username }}!</h1>
+                    <p class="mt-1 text-sm text-gray-500">Manage your SEO content projects and analyze keywords</p>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <span class="text-sm text-gray-500">Account: {{ user.email }}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <!-- Quick Actions -->
+        <div class="bg-white rounded-lg shadow p-6 mb-8">
+            <h2 class="text-xl font-semibold text-gray-900 mb-4">Quick Actions</h2>
+            <div class="grid md:grid-cols-2 gap-6">
+                <!-- New Project Form -->
+                <div>
+                    <h3 class="text-lg font-medium text-gray-900 mb-3">Create New Project</h3>
+                    <form action="/project" method="POST" class="space-y-4">
+                        <div>
+                            <label for="keyword" class="block text-sm font-medium text-gray-700 mb-1">
+                                Target Keyword
+                            </label>
+                            <input type="text" id="keyword" name="keyword" required
+                                   class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
+                                   placeholder="e.g., best gravel bikes 2025">
+                            <p class="mt-1 text-xs text-gray-500">Enter your main keyword or topic</p>
+                        </div>
+                        <button type="submit" 
+                                class="w-full btn-primary text-white px-4 py-2 rounded-md font-medium hover:shadow-lg transition-all">
+                            Create Project
+                        </button>
+                    </form>
+                </div>
+                
+                <!-- Stats -->
+                <div>
+                    <h3 class="text-lg font-medium text-gray-900 mb-3">Your Stats</h3>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="bg-blue-50 p-4 rounded-lg">
+                            <div class="text-2xl font-bold text-blue-600">{{ projects|length }}</div>
+                            <div class="text-sm text-blue-800">Total Projects</div>
+                        </div>
+                        <div class="bg-green-50 p-4 rounded-lg">
+                            <div class="text-2xl font-bold text-green-600">
+                                {{ projects|selectattr('status', 'equalto', 'completed')|list|length }}
+                            </div>
+                            <div class="text-sm text-green-800">Completed</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Projects List -->
+        <div class="bg-white rounded-lg shadow">
+            <div class="px-6 py-4 border-b border-gray-200">
+                <h2 class="text-xl font-semibold text-gray-900">Your Projects</h2>
+            </div>
+            
+            {% if projects %}
+                <div class="divide-y divide-gray-200">
+                    {% for project in projects %}
+                    <div class="p-6 hover:bg-gray-50 transition-colors">
+                        <div class="flex items-center justify-between">
+                            <div class="flex-1">
+                                <div class="flex items-center space-x-3">
+                                    <h3 class="text-lg font-medium text-gray-900">
+                                        <a href="/project/{{ project.id }}" class="hover:text-purple-600">
+                                            {{ project.title }}
+                                        </a>
+                                    </h3>
+                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
+                                        {% if project.status == 'completed' %}bg-green-100 text-green-800
+                                        {% elif project.status == 'processing' %}bg-yellow-100 text-yellow-800
+                                        {% elif project.status == 'failed' %}bg-red-100 text-red-800
+                                        {% else %}bg-gray-100 text-gray-800{% endif %}">
+                                        {{ project.status.title() }}
+                                    </span>
+                                </div>
+                                <p class="mt-1 text-sm text-gray-500">
+                                    Keyword: <span class="font-medium">{{ project.keyword }}</span>
+                                </p>
+                                <p class="mt-1 text-sm text-gray-500">
+                                    Created: {{ project.created_at.strftime('%B %d, %Y at %I:%M %p') }}
+                                </p>
+                            </div>
+                            
+                            <div class="flex items-center space-x-3">
+                                {% if project.status == 'pending' %}
+                                    <form action="/analyze/{{ project.id }}" method="POST" class="inline">
+                                        <button type="submit" 
+                                                class="btn-primary text-white px-4 py-2 rounded-md text-sm font-medium hover:shadow-lg transition-all">
+                                            Run Analysis
+                                        </button>
+                                    </form>
+                                {% elif project.status == 'processing' %}
+                                    <div class="flex items-center space-x-2">
+                                        <div class="animate-spin rounded-full h-4 w-4 border-b-2 border-purple-600"></div>
+                                        <span class="text-sm text-gray-500">Processing...</span>
+                                    </div>
+                                {% elif project.status == 'completed' %}
+                                    <a href="/project/{{ project.id }}" 
+                                       class="bg-green-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-green-700 transition-colors">
+                                        View Results
+                                    </a>
+                                {% elif project.status == 'failed' %}
+                                    <button class="bg-red-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-red-700 transition-colors"
+                                            onclick="retryAnalysis({{ project.id }})">
+                                        Retry
+                                    </button>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="p-12 text-center">
+                    <div class="mx-auto h-12 w-12 text-gray-400">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                        </svg>
+                    </div>
+                    <h3 class="mt-2 text-sm font-medium text-gray-900">No projects yet</h3>
+                    <p class="mt-1 text-sm text-gray-500">Get started by creating your first SEO content project.</p>
+                    <div class="mt-6">
+                        <button type="button" onclick="scrollToTop()" 
+                                class="btn-primary text-white px-4 py-2 rounded-md text-sm font-medium">
+                            Create Project
+                        </button>
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+
+        <!-- Getting Started Guide -->
+        {% if projects|length < 2 %}
+        <div class="mt-8 bg-blue-50 border border-blue-200 rounded-lg p-6">
+            <div class="flex">
+                <div class="flex-shrink-0">
+                    <svg class="h-6 w-6 text-blue-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                </div>
+                <div class="ml-3">
+                    <h3 class="text-sm font-medium text-blue-800">Getting Started</h3>
+                    <div class="mt-2 text-sm text-blue-700">
+                        <p class="mb-2">Here's how to use the SEO Content Generator:</p>
+                        <ol class="list-decimal list-inside space-y-1">
+                            <li>Enter your target keyword in the form above</li>
+                            <li>Click "Create Project" to start a new analysis</li>
+                            <li>Click "Run Analysis" to process your keyword</li>
+                            <li>View the results including entities, keywords, and content outline</li>
+                            <li>Use the generated schema markup for your content</li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+    function scrollToTop() {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+    
+    function retryAnalysis(projectId) {
+        if (confirm('Would you like to retry the analysis for this project?')) {
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.action = `/analyze/${projectId}`;
+            document.body.appendChild(form);
+            form.submit();
+        }
+    }
+    
+    // Auto-refresh for processing projects
+    function checkProcessingProjects() {
+        const processingElements = document.querySelectorAll('[data-status="processing"]');
+        if (processingElements.length > 0) {
+            setTimeout(() => {
+                window.location.reload();
+            }, 5000); // Refresh every 5 seconds if there are processing projects
+        }
+    }
+    
+    // Check on page load
+    document.addEventListener('DOMContentLoaded', function() {
+        checkProcessingProjects();
+    });
+    
+    // Show success message if redirected from project creation
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('created') === 'true') {
+        showFlashMessage('Project created successfully!', 'success');
+    }
+</script>
+{% endblock %}
+

@@ -1,0 +1,164 @@
+{% extends "base.html" %}
+
+{% block title %}Login - SEO Content Generator{% endblock %}
+
+{% block content %}
+<div class="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+    <div class="max-w-md w-full space-y-8">
+        <div>
+            <div class="mx-auto h-12 w-12 bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
+                <span class="text-white font-bold text-xl">S</span>
+            </div>
+            <h2 class="mt-6 text-center text-3xl font-extrabold text-gray-900">
+                Sign in to your account
+            </h2>
+            <p class="mt-2 text-center text-sm text-gray-600">
+                Or
+                <a href="/register" class="font-medium text-purple-600 hover:text-purple-500">
+                    create a new account
+                </a>
+            </p>
+        </div>
+        
+        <form class="mt-8 space-y-6" action="/login" method="POST">
+            <div class="rounded-md shadow-sm -space-y-px">
+                <div>
+                    <label for="username" class="sr-only">Username</label>
+                    <input id="username" name="username" type="text" required 
+                           class="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-purple-500 focus:border-purple-500 focus:z-10 sm:text-sm" 
+                           placeholder="Username">
+                </div>
+                <div>
+                    <label for="password" class="sr-only">Password</label>
+                    <input id="password" name="password" type="password" required 
+                           class="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-purple-500 focus:border-purple-500 focus:z-10 sm:text-sm" 
+                           placeholder="Password">
+                </div>
+            </div>
+
+            <div class="flex items-center justify-between">
+                <div class="flex items-center">
+                    <input id="remember-me" name="remember-me" type="checkbox" 
+                           class="h-4 w-4 text-purple-600 focus:ring-purple-500 border-gray-300 rounded">
+                    <label for="remember-me" class="ml-2 block text-sm text-gray-900">
+                        Remember me
+                    </label>
+                </div>
+
+                <div class="text-sm">
+                    <a href="#" class="font-medium text-purple-600 hover:text-purple-500">
+                        Forgot your password?
+                    </a>
+                </div>
+            </div>
+
+            <div>
+                <button type="submit" 
+                        class="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white btn-primary focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500">
+                    <span class="absolute left-0 inset-y-0 flex items-center pl-3">
+                        <svg class="h-5 w-5 text-purple-300 group-hover:text-purple-200" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                            <path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd" />
+                        </svg>
+                    </span>
+                    Sign in
+                </button>
+            </div>
+        </form>
+        
+        <!-- Demo Account Info -->
+        <div class="mt-6 bg-blue-50 border border-blue-200 rounded-md p-4">
+            <div class="flex">
+                <div class="flex-shrink-0">
+                    <svg class="h-5 w-5 text-blue-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" />
+                    </svg>
+                </div>
+                <div class="ml-3">
+                    <h3 class="text-sm font-medium text-blue-800">
+                        Demo Account Available
+                    </h3>
+                    <div class="mt-2 text-sm text-blue-700">
+                        <p>Username: <code class="bg-blue-100 px-1 rounded">demo</code></p>
+                        <p>Password: <code class="bg-blue-100 px-1 rounded">demo123</code></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+    // Enhanced form validation
+    document.addEventListener('DOMContentLoaded', function() {
+        const form = document.querySelector('form');
+        const usernameInput = document.getElementById('username');
+        const passwordInput = document.getElementById('password');
+        
+        // Real-time validation
+        usernameInput.addEventListener('blur', function() {
+            if (this.value.trim().length < 3) {
+                this.classList.add('border-red-500');
+                showFieldError(this, 'Username must be at least 3 characters');
+            } else {
+                this.classList.remove('border-red-500');
+                removeFieldError(this);
+            }
+        });
+        
+        passwordInput.addEventListener('blur', function() {
+            if (this.value.length < 6) {
+                this.classList.add('border-red-500');
+                showFieldError(this, 'Password must be at least 6 characters');
+            } else {
+                this.classList.remove('border-red-500');
+                removeFieldError(this);
+            }
+        });
+        
+        // Form submission
+        form.addEventListener('submit', function(e) {
+            let isValid = true;
+            
+            // Validate username
+            if (usernameInput.value.trim().length < 3) {
+                usernameInput.classList.add('border-red-500');
+                showFieldError(usernameInput, 'Username must be at least 3 characters');
+                isValid = false;
+            }
+            
+            // Validate password
+            if (passwordInput.value.length < 6) {
+                passwordInput.classList.add('border-red-500');
+                showFieldError(passwordInput, 'Password must be at least 6 characters');
+                isValid = false;
+            }
+            
+            if (!isValid) {
+                e.preventDefault();
+                showFlashMessage('Please fix the errors above', 'error');
+            }
+        });
+    });
+    
+    function showFieldError(input, message) {
+        removeFieldError(input);
+        
+        const errorDiv = document.createElement('div');
+        errorDiv.className = 'text-red-500 text-sm mt-1';
+        errorDiv.textContent = message;
+        errorDiv.id = input.id + '-error';
+        
+        input.parentNode.appendChild(errorDiv);
+    }
+    
+    function removeFieldError(input) {
+        const existingError = document.getElementById(input.id + '-error');
+        if (existingError) {
+            existingError.remove();
+        }
+    }
+</script>
+{% endblock %}
+
