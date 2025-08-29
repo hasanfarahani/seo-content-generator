@@ -164,7 +164,7 @@ async def create_project(
 
 # View results
 @app.get("/results/{project_id}", response_class=HTMLResponse)
-async def view_results(request: Request, project_id: int, token: str = None):
+async def view_results(request: Request, project_id: int, token: str = None, db: Session = Depends(get_db)):
     if not token:
         return RedirectResponse(url="/", status_code=303)
     
