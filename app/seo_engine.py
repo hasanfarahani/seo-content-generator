@@ -5,16 +5,16 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 import json
 import re
 from typing import List, Dict, Any
-import openai
 import os
 from dotenv import load_dotenv
+from free_ai_service import FreeAIService
 
 load_dotenv()
 
 class SEOEngine:
     def __init__(self):
         self.nlp = spacy.load("en_core_web_sm")
-        openai.api_key = os.getenv("OPENAI_API_KEY")
+        self.ai_service = FreeAIService()
         
     def scrape_serp_results(self, keyword: str, num_results: int = 10) -> List[Dict[str, Any]]:
         """
@@ -134,38 +134,13 @@ class SEOEngine:
         }
     
     def generate_content_outline(self, keyword: str, analysis: Dict[str, Any]) -> str:
-        """Generate content outline using OpenAI"""
+        """Generate content outline using free AI service"""
         try:
-            # Prepare context for OpenAI
-            entities_text = ", ".join([f"{ent['text']} ({ent['label']})" for ent in analysis['entities'][:10]])
-            keywords_text = ", ".join([kw['keyword'] for kw in analysis['tfidf_keywords'][:15]])
-            
-            prompt = f"""
-            Generate a comprehensive blog post outline for the keyword "{keyword}".
-            
-            Use these extracted entities naturally: {entities_text}
-            Include these important keywords: {keywords_text}
-            
-            Format the outline with:
-            - H2 headings for main sections
-            - H3 subheadings for subsections
-            - Brief description of what each section should cover
-            
-            Make it SEO-optimized and engaging for readers.
-            """
-            
-            response = openai.ChatCompletion.create(
-                model="gpt-3.5-turbo",
-                messages=[
-                    {"role": "system", "content": "You are an expert SEO content strategist."},
-                    {"role": "user", "content": prompt}
-                ],
-                max_tokens=500,
-                temperature=0.7
+            return self.ai_service.generate_content_outline(
+                keyword, 
+                analysis['entities'], 
+                analysis['tfidf_keywords']
             )
-            
-            return response.choices[0].message.content.strip()
-            
         except Exception as e:
             print(f"Error generating outline: {e}")
             return self._generate_fallback_outline(keyword, analysis)
@@ -202,37 +177,11 @@ class SEOEngine:
     
     def generate_schema_markup(self, keyword: str, analysis: Dict[str, Any]) -> str:
         """Generate JSON-LD schema markup"""
-        entities = [ent['text'] for ent in analysis['entities'][:5]]
-        keywords = [kw['keyword'] for kw in analysis['tfidf_keywords'][:10]]
-        
-        schema = {
-            "@context": "https://schema.org",
-            "@type": "Article",
-            "headline": f"Best {keyword.title()} in 2025 - Complete Guide",
-            "description": f"Comprehensive guide to {keyword} options, features, and buying advice for 2025.",
-            "keywords": ", ".join(keywords[:10]),
-            "about": {
-                "@type": "Thing",
-                "name": keyword
-            },
-            "mainEntity": {
-                "@type": "Thing",
-                "name": keyword,
-                "description": f"Complete analysis of {keyword} options and features"
-            },
-            "author": {
-                "@type": "Organization",
-                "name": "SEO Content Generator"
-            },
-            "publisher": {
-                "@type": "Organization",
-                "name": "SEO Content Generator"
-            },
-            "datePublished": "2025-01-01",
-            "dateModified": "2025-01-01"
-        }
-        
-        return json.dumps(schema, indent=2)
+        return self.ai_service.generate_schema_markup(
+            keyword, 
+            analysis['entities'], 
+            analysis['tfidf_keywords']
+        )
     
     def run_full_analysis(self, keyword: str) -> Dict[str, Any]:
         """Run complete SEO analysis pipeline"""

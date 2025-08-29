@@ -10,7 +10,7 @@ services:
     envVars:
       - key: PYTHON_VERSION
         value: 3.9.16
-      - key: OPENAI_API_KEY
+      - key: HUGGINGFACE_TOKEN
         sync: false
       - key: SECRET_KEY
         generateValue: true
