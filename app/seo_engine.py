@@ -1,5 +1,4 @@
 import requests
-from bs4 import BeautifulSoup
 import re
 from typing import Dict, List, Any
 import json
