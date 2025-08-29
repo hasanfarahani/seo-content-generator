@@ -7,7 +7,7 @@ import re
 from typing import List, Dict, Any
 import os
 from dotenv import load_dotenv
-from free_ai_service import FreeAIService
+from .free_ai_service import FreeAIService
 
 load_dotenv()
 
