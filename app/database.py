@@ -25,5 +25,7 @@ def get_db():
         db.close()
 
 def create_tables():
+    # Import models here so SQLAlchemy can see them when creating tables
+    from .models import User, Project, Analysis
     Base.metadata.create_all(bind=engine)
 
