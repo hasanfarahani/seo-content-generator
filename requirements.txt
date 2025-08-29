@@ -7,22 +7,20 @@ python-jose[cryptography]==3.3.0
 passlib[bcrypt]==1.7.4
 python-dotenv==1.0.0
 
-# Web scraping and data processing
+# Web scraping and data processing (simplified)
 requests==2.31.0
 beautifulsoup4==4.12.2
 lxml==4.9.3
-selenium==4.15.2
 
-# NLP and ML
+# NLP and ML (simplified)
 spacy==3.7.2
 scikit-learn==1.3.2
 nltk==3.8.1
 pandas==2.1.3
 numpy==1.25.2
 
-# AI and text generation
+# AI and text generation (simplified)
 transformers==4.35.2
-torch==2.1.1
 huggingface_hub
 sentence_transformers
 
