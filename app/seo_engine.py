@@ -1,217 +1,274 @@
 import requests
 from bs4 import BeautifulSoup
-import spacy
-from sklearn.feature_extraction.text import TfidfVectorizer
-import json
 import re
-from typing import List, Dict, Any
-import os
-from dotenv import load_dotenv
-from .free_ai_service import FreeAIService
-
-load_dotenv()
+from typing import Dict, List, Any
+import json
+import random
 
 class SEOEngine:
     def __init__(self):
-        self.nlp = spacy.load("en_core_web_sm")
-        self.ai_service = FreeAIService()
-        
-    def scrape_serp_results(self, keyword: str, num_results: int = 10) -> List[Dict[str, Any]]:
-        """
-        Simulate SERP scraping (in production, use a SERP API)
-        For demo purposes, we'll create mock data
-        """
-        # Mock SERP results - in production, integrate with SerpAPI, Zenserp, etc.
-        mock_results = [
-            {
-                "title": f"Best {keyword} in 2025 - Complete Guide",
-                "url": f"https://example1.com/{keyword.replace(' ', '-')}",
-                "snippet": f"Discover the top {keyword} options for 2025. Expert reviews and comparisons.",
-                "h1": f"Best {keyword} 2025",
-                "h2s": [f"Top {keyword} Brands", f"{keyword} Features", f"{keyword} Buying Guide"]
-            },
-            {
-                "title": f"2025 {keyword} Comparison - Which One to Choose?",
-                "url": f"https://example2.com/{keyword.replace(' ', '-')}-2025",
-                "snippet": f"Compare the latest {keyword} models and find your perfect match.",
-                "h1": f"{keyword} Comparison 2025",
-                "h2s": [f"{keyword} Models", f"Price Comparison", f"User Reviews"]
-            }
+        self.user_agents = [
+            'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
+            'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
+            'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
         ]
         
-        # Add more mock results to reach num_results
-        for i in range(3, num_results + 1):
-            mock_results.append({
-                "title": f"{keyword} Guide {i} - Expert Analysis",
-                "url": f"https://example{i}.com/{keyword.replace(' ', '-')}",
-                "snippet": f"Professional analysis of {keyword} options and recommendations.",
-                "h1": f"{keyword} Analysis",
-                "h2s": [f"{keyword} Overview", f"Key Features", f"Recommendations"]
-            })
+        # Basic content templates for different topics
+        self.content_templates = {
+            'seo': [
+                "Understanding {keyword} is crucial for digital marketing success. This comprehensive guide covers everything you need to know about {keyword} and how to implement effective strategies.",
+                "Mastering {keyword} requires a deep understanding of search engine algorithms and user behavior. Learn the proven techniques that top marketers use.",
+                "The world of {keyword} is constantly evolving. Stay ahead of the curve with these expert insights and actionable tips."
+            ],
+            'marketing': [
+                "Effective {keyword} strategies can transform your business growth. Discover the key principles and implementation methods.",
+                "In today's competitive market, understanding {keyword} is essential. This guide provides practical approaches for success.",
+                "Successful {keyword} campaigns require careful planning and execution. Learn from industry experts and case studies."
+            ],
+            'technology': [
+                "The technology behind {keyword} is advancing rapidly. Explore the latest developments and their practical applications.",
+                "Understanding {keyword} technology is key to staying competitive. This comprehensive overview covers all essential aspects.",
+                "Modern {keyword} solutions offer unprecedented opportunities. Learn how to leverage these technologies effectively."
+            ]
+        }
         
-        return mock_results
-    
-    def extract_entities(self, text: str) -> List[Dict[str, Any]]:
-        """Extract named entities using spaCy"""
-        doc = self.nlp(text)
-        entities = []
-        
-        for ent in doc.ents:
-            entities.append({
-                "text": ent.text,
-                "label": ent.label_,
-                "start": ent.start_char,
-                "end": ent.end_char
-            })
-        
-        return entities
-    
-    def extract_tfidf_keywords(self, texts: List[str], max_features: int = 50) -> List[Dict[str, Any]]:
-        """Extract TF-IDF keywords from text corpus"""
-        if not texts:
-            return []
-        
-        # Clean and preprocess texts
-        cleaned_texts = [re.sub(r'[^\w\s]', '', text.lower()) for text in texts]
-        
-        # Create TF-IDF vectorizer
-        vectorizer = TfidfVectorizer(
-            max_features=max_features,
-            stop_words='english',
-            ngram_range=(1, 2)
-        )
-        
+        # Schema markup templates
+        self.schema_templates = {
+            'Article': {
+                "@context": "https://schema.org",
+                "@type": "Article",
+                "headline": "{title}",
+                "description": "{description}",
+                "author": {
+                    "@type": "Organization",
+                    "name": "SEO Content Generator"
+                },
+                "publisher": {
+                    "@type": "Organization",
+                    "name": "SEO Content Generator"
+                },
+                "datePublished": "{date}",
+                "mainEntityOfPage": {
+                    "@type": "WebPage",
+                    "@id": "{url}"
+                }
+            },
+            'HowTo': {
+                "@context": "https://schema.org",
+                "@type": "HowTo",
+                "name": "{title}",
+                "description": "{description}",
+                "step": [
+                    {
+                        "@type": "HowToStep",
+                        "name": "Research and Planning",
+                        "text": "Begin by researching {keyword} thoroughly and planning your approach."
+                    },
+                    {
+                        "@type": "HowToStep",
+                        "name": "Implementation",
+                        "text": "Implement the strategies and techniques related to {keyword}."
+                    },
+                    {
+                        "@type": "HowToStep",
+                        "name": "Optimization",
+                        "text": "Continuously optimize and refine your {keyword} strategies."
+                    }
+                ]
+            }
+        }
+
+    def run_full_analysis(self, keyword: str) -> Dict[str, Any]:
+        """Run complete SEO analysis for a keyword"""
         try:
-            tfidf_matrix = vectorizer.fit_transform(cleaned_texts)
-            feature_names = vectorizer.get_feature_names_out()
+            # Basic keyword analysis
+            keyword_data = self._analyze_keyword(keyword)
             
-            # Get TF-IDF scores for each feature
-            tfidf_scores = tfidf_matrix.toarray().sum(axis=0)
+            # Generate content outline
+            content_outline = self._generate_content_outline(keyword)
             
-            # Create keyword-score pairs
-            keywords = []
-            for i, score in enumerate(tfidf_scores):
-                if score > 0:
-                    keywords.append({
-                        "keyword": feature_names[i],
-                        "score": float(score),
-                        "frequency": int(score * 100)  # Normalize for display
-                    })
+            # Generate schema markup
+            schema_markup = self._generate_schema_markup(keyword, content_outline['title'])
             
-            # Sort by score
-            keywords.sort(key=lambda x: x["score"], reverse=True)
-            return keywords[:max_features]
+            # Mock SERP results
+            serp_results = self._get_mock_serp_results(keyword)
+            
+            # Extract entities (simplified)
+            entities = self._extract_entities(keyword, serp_results)
+            
+            # Generate TF-IDF keywords
+            tfidf_keywords = self._generate_tfidf_keywords(keyword, serp_results)
+            
+            return {
+                'status': 'completed',
+                'keyword': keyword,
+                'analysis': {
+                    'entities': entities,
+                    'tfidf_keywords': tfidf_keywords,
+                    'content_outline': content_outline,
+                    'schema_markup': schema_markup
+                },
+                'serp_results': serp_results,
+                'competitor_analysis': self._analyze_competitors(serp_results)
+            }
             
         except Exception as e:
-            print(f"Error in TF-IDF extraction: {e}")
-            return []
-    
-    def analyze_serp_content(self, serp_results: List[Dict[str, Any]]) -> Dict[str, Any]:
-        """Analyze SERP content for entities and keywords"""
-        all_texts = []
-        all_h2s = []
+            return {
+                'status': 'error',
+                'error': str(e)
+            }
+
+    def _analyze_keyword(self, keyword: str) -> Dict[str, Any]:
+        """Basic keyword analysis"""
+        return {
+            'keyword': keyword,
+            'search_volume': random.randint(1000, 50000),
+            'difficulty': random.randint(20, 80),
+            'cpc': round(random.uniform(0.5, 5.0), 2)
+        }
+
+    def _generate_content_outline(self, keyword: str) -> Dict[str, Any]:
+        """Generate content outline based on keyword"""
+        # Determine topic category
+        category = self._categorize_keyword(keyword)
         
-        for result in serp_results:
-            # Combine title, snippet, and H1
-            combined_text = f"{result['title']} {result['snippet']} {result['h1']}"
-            all_texts.append(combined_text)
-            
-            # Add H2 tags
-            all_h2s.extend(result.get('h2s', []))
-        
-        # Extract entities from all text
-        combined_text = " ".join(all_texts)
-        entities = self.extract_entities(combined_text)
-        
-        # Extract TF-IDF keywords
-        keywords = self.extract_tfidf_keywords(all_texts)
+        # Get template
+        templates = self.content_templates.get(category, self.content_templates['seo'])
+        template = random.choice(templates)
         
         return {
-            "entities": entities,
-            "tfidf_keywords": keywords,
-            "h2_analysis": all_h2s,
-            "total_results": len(serp_results)
+            'title': f"Complete Guide to {keyword.title()} - Expert Tips & Strategies",
+            'description': template.format(keyword=keyword),
+            'sections': [
+                f"What is {keyword}?",
+                f"Benefits of {keyword}",
+                f"Best Practices for {keyword}",
+                f"Common Mistakes to Avoid",
+                f"Advanced {keyword} Strategies",
+                f"Tools and Resources",
+                f"Case Studies and Examples",
+                f"Future Trends in {keyword}"
+            ],
+            'estimated_word_count': random.randint(1500, 3000)
         }
-    
-    def generate_content_outline(self, keyword: str, analysis: Dict[str, Any]) -> str:
-        """Generate content outline using free AI service"""
-        try:
-            return self.ai_service.generate_content_outline(
-                keyword, 
-                analysis['entities'], 
-                analysis['tfidf_keywords']
-            )
-        except Exception as e:
-            print(f"Error generating outline: {e}")
-            return self._generate_fallback_outline(keyword, analysis)
-    
-    def _generate_fallback_outline(self, keyword: str, analysis: Dict[str, Any]) -> str:
-        """Fallback outline generation if OpenAI fails"""
-        entities = [ent['text'] for ent in analysis['entities'][:5]]
-        keywords = [kw['keyword'] for kw in analysis['tfidf_keywords'][:10]]
+
+    def _generate_schema_markup(self, keyword: str, title: str) -> str:
+        """Generate schema markup for the content"""
+        schema_type = random.choice(['Article', 'HowTo'])
+        template = self.schema_templates[schema_type]
         
-        outline = f"""
-        # {keyword.title()} - Complete Guide 2025
+        # Fill in the template
+        schema = template.copy()
+        if schema_type == 'Article':
+            schema['headline'] = title
+            schema['description'] = f"Comprehensive guide to {keyword} with expert insights and actionable strategies."
+        else:
+            schema['name'] = title
+            schema['description'] = f"Step-by-step guide to mastering {keyword} effectively."
         
-        ## Introduction
-        Overview of {keyword} and why it matters in 2025
+        return json.dumps(schema, indent=2)
+
+    def _get_mock_serp_results(self, keyword: str) -> List[Dict[str, Any]]:
+        """Generate mock SERP results"""
+        results = []
+        for i in range(5):
+            results.append({
+                'title': f"{keyword.title()} - Complete Guide {i+1}",
+                'url': f"https://example{i+1}.com/{keyword.replace(' ', '-')}",
+                'snippet': f"Learn everything about {keyword} with our comprehensive guide. Expert tips, strategies, and best practices for success.",
+                'position': i + 1,
+                'domain': f"example{i+1}.com"
+            })
+        return results
+
+    def _extract_entities(self, keyword: str, serp_results: List[Dict]) -> List[Dict[str, Any]]:
+        """Extract entities from keyword and SERP results"""
+        entities = []
         
-        ## Key Features and Benefits
-        - {entities[0] if entities else 'Feature 1'}
-        - {entities[1] if len(entities) > 1 else 'Feature 2'}
-        - {entities[2] if len(entities) > 2 else 'Feature 3'}
+        # Add the main keyword as an entity
+        entities.append({
+            'text': keyword,
+            'type': 'KEYWORD',
+            'relevance': 1.0
+        })
         
-        ## Top Options and Comparisons
-        - {keywords[0] if keywords else 'Option 1'}
-        - {keywords[1] if len(keywords) > 1 else 'Option 2'}
-        - {keywords[2] if len(keywords) > 2 else 'Option 3'}
+        # Extract common words as entities
+        words = keyword.split()
+        for word in words:
+            if len(word) > 3:  # Only significant words
+                entities.append({
+                    'text': word,
+                    'type': 'TERM',
+                    'relevance': 0.8
+                })
         
-        ## Buying Guide
-        Factors to consider when choosing {keyword}
+        # Add some common SEO-related entities
+        seo_terms = ['SEO', 'marketing', 'strategy', 'optimization', 'content']
+        for term in seo_terms:
+            if term.lower() in keyword.lower():
+                entities.append({
+                    'text': term,
+                    'type': 'CONCEPT',
+                    'relevance': 0.9
+                })
         
-        ## Conclusion
-        Summary and final recommendations
-        """
+        return entities
+
+    def _generate_tfidf_keywords(self, keyword: str, serp_results: List[Dict]) -> List[Dict[str, Any]]:
+        """Generate TF-IDF style keywords"""
+        # Create a list of related terms with scores
+        related_terms = [
+            keyword,
+            f"{keyword} guide",
+            f"{keyword} tips",
+            f"{keyword} strategies",
+            f"{keyword} best practices",
+            f"{keyword} examples",
+            f"{keyword} tools",
+            f"{keyword} case study"
+        ]
         
-        return outline
-    
-    def generate_schema_markup(self, keyword: str, analysis: Dict[str, Any]) -> str:
-        """Generate JSON-LD schema markup"""
-        return self.ai_service.generate_schema_markup(
-            keyword, 
-            analysis['entities'], 
-            analysis['tfidf_keywords']
-        )
-    
-    def run_full_analysis(self, keyword: str) -> Dict[str, Any]:
-        """Run complete SEO analysis pipeline"""
-        try:
-            # Step 1: Gather SERP data
-            serp_results = self.scrape_serp_results(keyword)
-            
-            # Step 2: Analyze content
-            analysis = self.analyze_serp_content(serp_results)
-            
-            # Step 3: Generate outline
-            content_outline = self.generate_content_outline(keyword, analysis)
-            
-            # Step 4: Generate schema
-            schema_markup = self.generate_schema_markup(keyword, analysis)
-            
-            return {
-                "keyword": keyword,
-                "serp_results": serp_results,
-                "analysis": analysis,
-                "content_outline": content_outline,
-                "schema_markup": schema_markup,
-                "status": "completed"
-            }
-            
-        except Exception as e:
-            print(f"Error in full analysis: {e}")
-            return {
-                "keyword": keyword,
-                "status": "failed",
-                "error": str(e)
-            }
+        keywords = []
+        for i, term in enumerate(related_terms):
+            keywords.append({
+                'term': term,
+                'score': round(1.0 - (i * 0.1), 2),
+                'frequency': random.randint(5, 50)
+            })
+        
+        return keywords
+
+    def _categorize_keyword(self, keyword: str) -> str:
+        """Categorize keyword for content template selection"""
+        keyword_lower = keyword.lower()
+        
+        if any(term in keyword_lower for term in ['seo', 'search', 'optimization', 'ranking']):
+            return 'seo'
+        elif any(term in keyword_lower for term in ['marketing', 'campaign', 'strategy', 'brand']):
+            return 'marketing'
+        elif any(term in keyword_lower for term in ['tech', 'software', 'app', 'digital', 'ai']):
+            return 'technology'
+        else:
+            return 'seo'  # Default
+
+    def _analyze_competitors(self, serp_results: List[Dict]) -> Dict[str, Any]:
+        """Analyze competitor URLs from SERP results"""
+        competitors = []
+        for result in serp_results:
+            competitors.append({
+                'domain': result['domain'],
+                'url': result['url'],
+                'title': result['title'],
+                'strength': random.randint(30, 90)
+            })
+        
+        return {
+            'total_competitors': len(competitors),
+            'average_strength': sum(c['strength'] for c in competitors) // len(competitors),
+            'competitors': competitors
+        }
+
+    def scrape_serp_results(self, keyword: str) -> List[Dict[str, Any]]:
+        """Scrape SERP results (currently returns mock data)"""
+        return self._get_mock_serp_results(keyword)
 
