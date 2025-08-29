@@ -1,6 +1,6 @@
 from fastapi import FastAPI, Request, Depends, HTTPException, Form, status
 from fastapi.responses import HTMLResponse, RedirectResponse
-from fastapi.staticfiles import StaticFiles
+
 from fastapi.templating import Jinja2Templates
 from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
@@ -22,8 +22,7 @@ ALGORITHM = os.getenv("ALGORITHM", "HS256")
 
 app = FastAPI(title="SEO Content Generator", version="1.0.0")
 
-# Mount static files
-app.mount("/static", StaticFiles(directory="static"), name="static")
+# Static files not needed for this app
 
 # Templates
 templates = Jinja2Templates(directory="templates")
