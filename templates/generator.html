@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SEO Content Generator - AI-Powered Content Creation</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'dark': '#0a0a0a',
+                        'accent': '#6366f1',
+                        'accent-hover': '#4f46e5'
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .gradient-bg {
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 50%, #16213e 100%);
+        }
+        .glass-effect {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .glow {
+            box-shadow: 0 0 20px rgba(99, 102, 241, 0.3);
+        }
+    </style>
+</head>
+<body class="bg-dark text-white min-h-screen">
+    <!-- Navigation -->
+    <nav class="glass-effect border-b border-white/10">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center py-4">
+                <div class="flex items-center space-x-2">
+                    <div class="w-8 h-8 bg-accent rounded-lg flex items-center justify-center">
+                        <span class="text-white font-bold text-lg">AI</span>
+                    </div>
+                    <span class="text-xl font-bold">SEO Writer</span>
+                </div>
+                <a href="/" class="text-gray-400 hover:text-white transition-colors">← Back to Home</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="gradient-bg min-h-screen py-12">
+        <div class="max-w-4xl mx-auto px-4">
+            <!-- Header -->
+            <div class="text-center mb-12">
+                <h1 class="text-4xl md:text-5xl font-bold mb-6">Create Your SEO Content</h1>
+                <p class="text-xl text-gray-300 max-w-2xl mx-auto">
+                    Enter your target keyword and our AI will analyze the competition, extract key entities, 
+                    and generate a complete content strategy for you.
+                </p>
+            </div>
+
+            <!-- Generator Form -->
+            <div class="glass-effect rounded-2xl p-8 mb-8">
+                <form action="/create-project" method="POST" id="generatorForm">
+                    <input type="hidden" name="token" value="{{ token }}">
+                    
+                    <div class="mb-6">
+                        <label for="keyword" class="block text-lg font-semibold mb-3">
+                            What topic would you like to create content about?
+                        </label>
+                        <input 
+                            type="text" 
+                            id="keyword" 
+                            name="keyword" 
+                            placeholder="e.g., 'best coffee makers 2024', 'digital marketing strategies', 'python web development'"
+                            required
+                            class="w-full px-6 py-4 bg-white/10 border border-white/20 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:border-accent focus:ring-2 focus:ring-accent/20 transition-all text-lg"
+                        >
+                        <p class="text-sm text-gray-400 mt-2">
+                            Be specific! The more targeted your keyword, the better the analysis.
+                        </p>
+                    </div>
+
+                    <div class="text-center">
+                        <button 
+                            type="submit"
+                            id="generateBtn"
+                            class="px-12 py-4 bg-accent hover:bg-accent-hover rounded-xl font-semibold text-lg transition-all duration-300 glow hover:glow-lg disabled:opacity-50 disabled:cursor-not-allowed"
+                        >
+                            <span id="btnText">Generate Content Strategy</span>
+                            <span id="loadingText" class="hidden">Analyzing...</span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- What You'll Get -->
+            <div class="glass-effect rounded-2xl p-8">
+                <h2 class="text-2xl font-bold mb-6 text-center">What You'll Get</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="flex items-start space-x-3">
+                        <div class="w-6 h-6 bg-accent rounded-full flex items-center justify-center flex-shrink-0 mt-1">
+                            <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                            </svg>
+                        </div>
+                        <div>
+                            <h3 class="font-semibold mb-1">SERP Analysis</h3>
+                            <p class="text-gray-400 text-sm">Top 10 search results with insights on what ranks</p>
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-start space-x-3">
+                        <div class="w-6 h-6 bg-accent rounded-full flex items-center justify-center flex-shrink-0 mt-1">
+                            <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                            </svg>
+                        </div>
+                        <div>
+                            <h3 class="font-semibold mb-1">Entity Mapping</h3>
+                            <p class="text-gray-400 text-sm">Key topics, people, and concepts to include</p>
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-start space-x-3">
+                        <div class="w-6 h-6 bg-accent rounded-full flex items-center justify-center flex-shrink-0 mt-1">
+                            <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                            </svg>
+                        </div>
+                        <div>
+                            <h3 class="font-semibold mb-1">Content Outline</h3>
+                            <p class="text-gray-400 text-sm">AI-generated structure optimized for SEO</p>
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-start space-x-3">
+                        <div class="w-6 h-6 bg-accent rounded-full flex items-center justify-center flex-shrink-0 mt-1">
+                            <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                            </svg>
+                        </div>
+                        <div>
+                            <h3 class="font-semibold mb-1">Schema Markup</h3>
+                            <p class="text-gray-400 text-sm">JSON-LD structured data ready to implement</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const form = document.getElementById('generatorForm');
+        const generateBtn = document.getElementById('generateBtn');
+        const btnText = document.getElementById('btnText');
+        const loadingText = document.getElementById('loadingText');
+
+        form.addEventListener('submit', function(e) {
+            // Show loading state
+            generateBtn.disabled = true;
+            btnText.classList.add('hidden');
+            loadingText.classList.remove('hidden');
+            
+            // Form will submit and redirect to results page
+        });
+    </script>
+</body>
+</html>

@@ -6,6 +6,7 @@ from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
 import os
 from dotenv import load_dotenv
+from jose import JWTError, jwt
 
 from .database import get_db, create_tables
 from .models import User, Project, Analysis
@@ -14,6 +15,10 @@ from .seo_engine import SEOEngine
 from .utils import validate_keyword, generate_project_title, calculate_analysis_score
 
 load_dotenv()
+
+# JWT Configuration
+SECRET_KEY = os.getenv("SECRET_KEY", "your-secret-key-change-this")
+ALGORITHM = os.getenv("ALGORITHM", "HS256")
 
 app = FastAPI(title="SEO Content Generator", version="1.0.0")
 
@@ -36,79 +41,134 @@ async def startup_event():
 async def landing_page(request: Request):
     return templates.TemplateResponse("landing.html", {"request": request})
 
-# Login page
-@app.get("/login", response_class=HTMLResponse)
-async def login_page(request: Request):
-    return templates.TemplateResponse("login.html", {"request": request})
-
-# Register page
-@app.get("/register", response_class=HTMLResponse)
-async def register_page(request: Request):
-    return templates.TemplateResponse("register.html", {"request": request})
-
-# Dashboard
-@app.get("/dashboard", response_class=HTMLResponse)
-async def dashboard(request: Request, current_user: User = Depends(get_current_active_user), db: Session = Depends(get_db)):
-    # Get user's projects
-    projects = db.query(Project).filter(Project.user_id == current_user.id).order_by(Project.created_at.desc()).all()
-    
-    return templates.TemplateResponse("dashboard.html", {
-        "request": request,
-        "user": current_user,
-        "projects": projects
-    })
-
-# User registration
-@app.post("/register")
-async def register_user(
-    username: str = Form(...),
+# Email capture and direct access
+@app.post("/capture-email")
+async def capture_email(
     email: str = Form(...),
-    password: str = Form(...),
     db: Session = Depends(get_db)
 ):
-    # Check if user already exists
-    existing_user = db.query(User).filter(
-        (User.username == username) | (User.email == email)
-    ).first()
+    # Check if email already exists
+    existing_user = db.query(User).filter(User.email == email).first()
     
     if existing_user:
-        raise HTTPException(status_code=400, detail="Username or email already registered")
+        # User exists, create access token
+        access_token = create_access_token(data={"sub": existing_user.username})
+        return RedirectResponse(url=f"/generator?token={access_token}", status_code=303)
     
-    # Create new user
-    hashed_password = get_password_hash(password)
+    # Create new user with email only
     user = User(
-        username=username,
+        username=email.split('@')[0],  # Use email prefix as username
         email=email,
-        hashed_password=hashed_password
+        hashed_password="",  # No password needed
+        is_active=1
     )
     
     db.add(user)
     db.commit()
     db.refresh(user)
     
-    return RedirectResponse(url="/login", status_code=303)
-
-# User login
-@app.post("/login")
-async def login_user(
-    form_data: OAuth2PasswordRequestForm = Depends(),
-    db: Session = Depends(get_db)
-):
-    user = db.query(User).filter(User.username == form_data.username).first()
-    
-    if not user or not verify_password(form_data.password, user.hashed_password):
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Incorrect username or password",
-            headers={"WWW-Authenticate": "Bearer"},
-        )
-    
     # Create access token
     access_token = create_access_token(data={"sub": user.username})
+    return RedirectResponse(url=f"/generator?token={access_token}", status_code=303)
+
+# Direct access generator (no login required)
+@app.get("/generator", response_class=HTMLResponse)
+async def generator_page(request: Request, token: str = None):
+    if not token:
+        return RedirectResponse(url="/", status_code=303)
     
-    # In a real app, you'd set this as a cookie
-    # For demo purposes, we'll redirect with a token parameter
-    return RedirectResponse(url=f"/dashboard?token={access_token}", status_code=303)
+    try:
+        # Verify token
+        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        username = payload.get("sub")
+        if username is None:
+            return RedirectResponse(url="/", status_code=303)
+    except JWTError:
+        return RedirectResponse(url="/", status_code=303)
+    
+    return templates.TemplateResponse("generator.html", {"request": request, "token": token})
+
+# Create new project (no auth required)
+@app.post("/create-project")
+async def create_project(
+    keyword: str = Form(...),
+    token: str = Form(...),
+    db: Session = Depends(get_db)
+):
+    try:
+        # Verify token
+        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        username = payload.get("sub")
+        if username is None:
+            raise HTTPException(status_code=401, detail="Invalid token")
+        
+        # Get user
+        user = db.query(User).filter(User.username == username).first()
+        if not user:
+            raise HTTPException(status_code=404, detail="User not found")
+        
+        # Create project
+        project = Project(
+            user_id=user.id,
+            keyword=keyword,
+            title=generate_project_title(keyword),
+            status="pending"
+        )
+        
+        db.add(project)
+        db.commit()
+        db.refresh(project)
+        
+        # Run analysis
+        analysis_result = seo_engine.analyze_keyword(keyword)
+        
+        # Save analysis
+        analysis = Analysis(
+            project_id=project.id,
+            serp_results=analysis_result.get('serp_results', []),
+            entities=analysis_result.get('entities', []),
+            tfidf_keywords=analysis_result.get('tfidf_keywords', []),
+            competitor_urls=analysis_result.get('competitor_urls', []),
+            content_outline=analysis_result.get('content_outline', ''),
+            schema_markup=analysis_result.get('schema_markup', '')
+        )
+        
+        db.add(analysis)
+        db.commit()
+        
+        return RedirectResponse(url=f"/results/{project.id}?token={token}", status_code=303)
+        
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+# View results
+@app.get("/results/{project_id}", response_class=HTMLResponse)
+async def view_results(request: Request, project_id: int, token: str = None):
+    if not token:
+        return RedirectResponse(url="/", status_code=303)
+    
+    try:
+        # Verify token
+        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        username = payload.get("sub")
+        if username is None:
+            return RedirectResponse(url="/", status_code=303)
+    except JWTError:
+        return RedirectResponse(url="/", status_code=303)
+    
+    # Get project and analysis
+    project = db.query(Project).filter(Project.id == project_id).first()
+    analysis = db.query(Analysis).filter(Analysis.project_id == project_id).first()
+    
+    if not project or not analysis:
+        raise HTTPException(status_code=404, detail="Project not found")
+    
+    return templates.TemplateResponse("results.html", {
+        "request": request,
+        "project": project,
+        "analysis": analysis,
+        "token": token
+    })
 
 # Create new project
 @app.post("/project")

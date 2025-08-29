@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SEO Analysis Results - {{ project.keyword }}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'dark': '#0a0a0a',
+                        'accent': '#6366f1',
+                        'accent-hover': '#4f46e5'
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .gradient-bg {
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 50%, #16213e 100%);
+        }
+        .glass-effect {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .glow {
+            box-shadow: 0 0 20px rgba(99, 102, 241, 0.3);
+        }
+        .code-block {
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            padding: 16px;
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+            font-size: 14px;
+            line-height: 1.5;
+            overflow-x: auto;
+        }
+    </style>
+</head>
+<body class="bg-dark text-white min-h-screen">
+    <!-- Navigation -->
+    <nav class="glass-effect border-b border-white/10">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center py-4">
+                <div class="flex items-center space-x-2">
+                    <div class="w-8 h-8 bg-accent rounded-lg flex items-center justify-center">
+                        <span class="text-white font-bold text-lg">AI</span>
+                    </div>
+                    <span class="text-xl font-bold">SEO Writer</span>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <a href="/generator?token={{ token }}" class="text-gray-400 hover:text-white transition-colors">Create New Analysis</a>
+                    <a href="/" class="text-gray-400 hover:text-white transition-colors">← Back to Home</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="gradient-bg min-h-screen py-12">
+        <div class="max-w-7xl mx-auto px-4">
+            <!-- Header -->
+            <div class="text-center mb-12">
+                <h1 class="text-4xl md:text-5xl font-bold mb-6">SEO Analysis Results</h1>
+                <p class="text-2xl text-accent font-semibold mb-4">"{{ project.keyword }}"</p>
+                <p class="text-xl text-gray-300 max-w-3xl mx-auto">
+                    Here's your complete SEO content strategy based on competitor analysis and AI insights.
+                </p>
+            </div>
+
+            <!-- Results Grid -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <!-- Left Column -->
+                <div class="space-y-8">
+                    <!-- SERP Analysis -->
+                    <div class="glass-effect rounded-2xl p-6">
+                        <h2 class="text-2xl font-bold mb-4 flex items-center">
+                            <svg class="w-6 h-6 text-accent mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                            </svg>
+                            SERP Analysis
+                        </h2>
+                        <div class="space-y-4">
+                            {% if analysis.serp_results %}
+                                {% for result in analysis.serp_results[:5] %}
+                                <div class="bg-white/5 rounded-lg p-4">
+                                    <h3 class="font-semibold text-accent mb-2">{{ result.title if result.title else 'Title not available' }}</h3>
+                                    <p class="text-gray-300 text-sm mb-2">{{ result.snippet if result.snippet else 'Snippet not available' }}</p>
+                                    <a href="{{ result.url if result.url else '#' }}" target="_blank" class="text-accent hover:text-accent-hover text-sm">
+                                        {{ result.url if result.url else 'URL not available' }}
+                                    </a>
+                                </div>
+                                {% endfor %}
+                            {% else %}
+                                <p class="text-gray-400">SERP analysis data not available.</p>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <!-- Entity Mapping -->
+                    <div class="glass-effect rounded-2xl p-6">
+                        <h2 class="text-2xl font-bold mb-4 flex items-center">
+                            <svg class="w-6 h-6 text-accent mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path>
+                            </svg>
+                            Key Entities & Topics
+                        </h2>
+                        <div class="space-y-3">
+                            {% if analysis.entities %}
+                                {% for entity in analysis.entities[:10] %}
+                                <div class="flex items-center justify-between bg-white/5 rounded-lg px-4 py-2">
+                                    <span class="font-medium">{{ entity.text if entity.text else 'Entity' }}</span>
+                                    <span class="text-accent text-sm">{{ entity.label if entity.label else 'N/A' }}</span>
+                                </div>
+                                {% endfor %}
+                            {% else %}
+                                <p class="text-gray-400">Entity data not available.</p>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <!-- TF-IDF Keywords -->
+                    <div class="glass-effect rounded-2xl p-6">
+                        <h2 class="text-2xl font-bold mb-4 flex items-center">
+                            <svg class="w-6 h-6 text-accent mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                            </svg>
+                            Important Keywords
+                        </h2>
+                        <div class="flex flex-wrap gap-2">
+                            {% if analysis.tfidf_keywords %}
+                                {% for keyword in analysis.tfidf_keywords[:15] %}
+                                <span class="bg-accent/20 text-accent px-3 py-1 rounded-full text-sm">
+                                    {{ keyword.text if keyword.text else 'Keyword' }}
+                                </span>
+                                {% endfor %}
+                            {% else %}
+                                <p class="text-gray-400">Keyword data not available.</p>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Column -->
+                <div class="space-y-8">
+                    <!-- Content Outline -->
+                    <div class="glass-effect rounded-2xl p-6">
+                        <h2 class="text-2xl font-bold mb-4 flex items-center">
+                            <svg class="w-6 h-6 text-accent mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                            </svg>
+                            Content Outline
+                        </h2>
+                        <div class="prose prose-invert max-w-none">
+                            {% if analysis.content_outline %}
+                                <div class="whitespace-pre-wrap text-gray-300">{{ analysis.content_outline }}</div>
+                            {% else %}
+                                <p class="text-gray-400">Content outline not available.</p>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <!-- Schema Markup -->
+                    <div class="glass-effect rounded-2xl p-6">
+                        <h2 class="text-2xl font-bold mb-4 flex items-center">
+                            <svg class="w-6 h-6 text-accent mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01"></path>
+                            </svg>
+                            Schema Markup (JSON-LD)
+                        </h2>
+                        {% if analysis.schema_markup %}
+                            <div class="code-block text-green-400">
+                                {{ analysis.schema_markup }}
+                            </div>
+                            <div class="mt-4">
+                                <button onclick="copySchema()" class="bg-accent hover:bg-accent-hover px-4 py-2 rounded-lg text-sm transition-colors">
+                                    Copy Schema
+                                </button>
+                            </div>
+                        {% else %}
+                            <p class="text-gray-400">Schema markup not available.</p>
+                        {% endif %}
+                    </div>
+
+                    <!-- Competitor URLs -->
+                    <div class="glass-effect rounded-2xl p-6">
+                        <h2 class="text-2xl font-bold mb-4 flex items-center">
+                            <svg class="w-6 h-6 text-accent mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                            </svg>
+                            Competitor URLs
+                        </h2>
+                        <div class="space-y-2">
+                            {% if analysis.competitor_urls %}
+                                {% for url in analysis.competitor_urls[:5] %}
+                                <a href="{{ url }}" target="_blank" class="block text-accent hover:text-accent-hover text-sm break-all">
+                                    {{ url }}
+                                </a>
+                                {% endfor %}
+                            {% else %}
+                                <p class="text-gray-400">Competitor URLs not available.</p>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="text-center mt-12">
+                <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                    <a href="/generator?token={{ token }}" class="bg-accent hover:bg-accent-hover px-8 py-4 rounded-xl font-semibold transition-all duration-300 glow hover:glow-lg">
+                        Create Another Analysis
+                    </a>
+                    <a href="/" class="border border-white/20 text-white hover:bg-white/10 px-8 py-4 rounded-xl font-semibold transition-all duration-300">
+                        Back to Home
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function copySchema() {
+            const schemaText = `{{ analysis.schema_markup | safe }}`;
+            navigator.clipboard.writeText(schemaText).then(() => {
+                // Show success message
+                const button = event.target;
+                const originalText = button.textContent;
+                button.textContent = 'Copied!';
+                button.classList.add('bg-green-600');
+                
+                setTimeout(() => {
+                    button.textContent = originalText;
+                    button.classList.remove('bg-green-600');
+                }, 2000);
+            }).catch(err => {
+                console.error('Failed to copy: ', err);
+            });
+        }
+    </script>
+</body>
+</html>

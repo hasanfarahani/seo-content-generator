@@ -1,200 +1,302 @@
-{% extends "base.html" %}
-
-{% block title %}SEO Content Generator - AI-Powered Content Creation{% endblock %}
-
-{% block content %}
-<!-- Hero Section -->
-<section class="gradient-bg text-white py-20">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-        <h1 class="text-5xl md:text-6xl font-bold mb-6">
-            AI-Powered SEO Content Generator
-        </h1>
-        <p class="text-xl md:text-2xl mb-8 text-blue-100">
-            Generate SEO-optimized content with entity mapping, schema markup, and competitor analysis
-        </p>
-        <div class="flex flex-col sm:flex-row gap-4 justify-center">
-            <a href="/register" class="btn-primary text-white px-8 py-4 rounded-lg text-lg font-semibold inline-block">
-                Get Started Free
-            </a>
-            <a href="#features" class="bg-white text-purple-600 px-8 py-4 rounded-lg text-lg font-semibold hover:bg-gray-100 transition-colors">
-                Learn More
-            </a>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI SEO Content Generator - Create Winning Content in Seconds</title>
+    <meta name="description" content="Generate SEO-optimized content, entity mapping, and schema markup using AI. No login required - just enter your email and start creating.">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        'dark': '#0a0a0a',
+                        'darker': '#050505',
+                        'accent': '#6366f1',
+                        'accent-hover': '#4f46e5'
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .gradient-bg {
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 50%, #16213e 100%);
+        }
+        .glass-effect {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .glow {
+            box-shadow: 0 0 20px rgba(99, 102, 241, 0.3);
+        }
+        .animate-float {
+            animation: float 6s ease-in-out infinite;
+        }
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+        }
+        .animate-pulse-slow {
+            animation: pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+    </style>
+</head>
+<body class="bg-dark text-white min-h-screen overflow-x-hidden">
+    <!-- Navigation -->
+    <nav class="fixed w-full z-50 glass-effect">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center py-4">
+                <div class="flex items-center space-x-2">
+                    <div class="w-8 h-8 bg-accent rounded-lg flex items-center justify-center">
+                        <span class="text-white font-bold text-lg">AI</span>
+                    </div>
+                    <span class="text-xl font-bold">SEO Writer</span>
+                </div>
+                <div class="hidden md:flex items-center space-x-8">
+                    <a href="#features" class="hover:text-accent transition-colors">Features</a>
+                    <a href="#how-it-works" class="hover:text-accent transition-colors">How It Works</a>
+                    <a href="#pricing" class="hover:text-accent transition-colors">Pricing</a>
+                </div>
+            </div>
         </div>
-    </div>
-</section>
+    </nav>
 
-<!-- Features Section -->
-<section id="features" class="py-20 bg-white">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="text-center mb-16">
-            <h2 class="text-4xl font-bold text-gray-900 mb-4">
-                Everything You Need for SEO Content
-            </h2>
-            <p class="text-xl text-gray-600 max-w-3xl mx-auto">
-                Our AI-powered platform analyzes SERP data, extracts key entities, and generates optimized content outlines with structured schema markup.
+    <!-- Hero Section -->
+    <section class="gradient-bg pt-32 pb-20 px-4">
+        <div class="max-w-7xl mx-auto text-center">
+            <div class="animate-float mb-8">
+                <div class="inline-flex items-center space-x-2 bg-accent/20 px-4 py-2 rounded-full text-accent text-sm font-medium">
+                    <span class="w-2 h-2 bg-accent rounded-full animate-pulse-slow"></span>
+                    <span>Powered by Advanced AI</span>
+                </div>
+            </div>
+            
+            <h1 class="text-5xl md:text-7xl font-bold mb-8 leading-tight">
+                Create <span class="text-transparent bg-clip-text bg-gradient-to-r from-accent to-purple-400">SEO Content</span> That Ranks
+            </h1>
+            
+            <p class="text-xl md:text-2xl text-gray-300 mb-12 max-w-4xl mx-auto leading-relaxed">
+                Generate SEO-optimized content, entity mapping, and schema markup in seconds. 
+                No complex tools needed - just AI-powered insights that drive results.
             </p>
-        </div>
-        
-        <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-            <!-- Feature 1 -->
-            <div class="bg-gray-50 p-8 rounded-xl card-hover">
-                <div class="w-16 h-16 bg-blue-100 rounded-lg flex items-center justify-center mb-6">
-                    <svg class="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
-                    </svg>
-                </div>
-                <h3 class="text-xl font-semibold text-gray-900 mb-4">SERP Analysis</h3>
-                <p class="text-gray-600">
-                    Analyze top search results to understand what content ranks and identify content gaps.
-                </p>
-            </div>
-            
-            <!-- Feature 2 -->
-            <div class="bg-gray-50 p-8 rounded-xl card-hover">
-                <div class="w-16 h-16 bg-purple-100 rounded-lg flex items-center justify-center mb-6">
-                    <svg class="w-8 h-8 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path>
-                    </svg>
-                </div>
-                <h3 class="text-xl font-semibold text-gray-900 mb-4">Entity Extraction</h3>
-                <p class="text-gray-600">
-                    Use advanced NLP to identify key entities, topics, and relationships in your content.
-                </p>
-            </div>
-            
-            <!-- Feature 3 -->
-            <div class="bg-gray-50 p-8 rounded-xl card-hover">
-                <div class="w-16 h-16 bg-green-100 rounded-lg flex items-center justify-center mb-6">
-                    <svg class="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-                    </svg>
-                </div>
-                <h3 class="text-xl font-semibold text-gray-900 mb-4">Content Outlines</h3>
-                <p class="text-gray-600">
-                    AI-generated content structures optimized for search engines and user engagement.
-                </p>
-            </div>
-            
-            <!-- Feature 4 -->
-            <div class="bg-gray-50 p-8 rounded-xl card-hover">
-                <div class="w-16 h-16 bg-yellow-100 rounded-lg flex items-center justify-center mb-6">
-                    <svg class="w-8 h-8 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"></path>
-                    </svg>
-                </div>
-                <h3 class="text-xl font-semibold text-gray-900 mb-4">Schema Markup</h3>
-                <p class="text-gray-600">
-                    Automatic JSON-LD schema generation for better search visibility and rich snippets.
-                </p>
-            </div>
-            
-            <!-- Feature 5 -->
-            <div class="bg-gray-50 p-8 rounded-xl card-hover">
-                <div class="w-16 h-16 bg-red-100 rounded-lg flex items-center justify-center mb-6">
-                    <svg class="w-8 h-8 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path>
-                    </svg>
-                </div>
-                <h3 class="text-xl font-semibold text-gray-900 mb-4">Competitor Analysis</h3>
-                <p class="text-gray-600">
-                    Analyze competitor content to find unique angles and opportunities for your content.
-                </p>
-            </div>
-            
-            <!-- Feature 6 -->
-            <div class="bg-gray-50 p-8 rounded-xl card-hover">
-                <div class="w-16 h-16 bg-indigo-100 rounded-lg flex items-center justify-center mb-6">
-                    <svg class="w-8 h-8 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
-                    </svg>
-                </div>
-                <h3 class="text-xl font-semibold text-gray-900 mb-4">Performance Analytics</h3>
-                <p class="text-gray-600">
-                    Track your content performance and get insights to improve your SEO strategy.
-                </p>
-            </div>
-        </div>
-    </div>
-</section>
 
-<!-- How It Works Section -->
-<section class="py-20 bg-gray-50">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="text-center mb-16">
-            <h2 class="text-4xl font-bold text-gray-900 mb-4">
-                How It Works
-            </h2>
-            <p class="text-xl text-gray-600">
-                Simple 4-step process to create SEO-optimized content
-            </p>
-        </div>
-        
-        <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
-            <!-- Step 1 -->
-            <div class="text-center">
-                <div class="w-16 h-16 bg-blue-500 text-white rounded-full flex items-center justify-center text-2xl font-bold mx-auto mb-4">
-                    1
-                </div>
-                <h3 class="text-xl font-semibold text-gray-900 mb-2">Enter Keyword</h3>
-                <p class="text-gray-600">
-                    Input your target keyword or topic for content generation
-                </p>
+            <!-- Email Capture Form -->
+            <div class="max-w-md mx-auto mb-12">
+                <form action="/capture-email" method="POST" class="flex flex-col sm:flex-row gap-4">
+                    <input 
+                        type="email" 
+                        name="email" 
+                        placeholder="Enter your email to start" 
+                        required
+                        class="flex-1 px-6 py-4 bg-white/10 border border-white/20 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:border-accent focus:ring-2 focus:ring-accent/20 transition-all"
+                    >
+                    <button 
+                        type="submit"
+                        class="px-8 py-4 bg-accent hover:bg-accent-hover rounded-xl font-semibold transition-all duration-300 glow hover:glow-lg"
+                    >
+                        Start Free
+                    </button>
+                </form>
+                <p class="text-sm text-gray-400 mt-3">No credit card • No login • Instant access</p>
             </div>
-            
-            <!-- Step 2 -->
-            <div class="text-center">
-                <div class="w-16 h-16 bg-purple-500 text-white rounded-full flex items-center justify-center text-2xl font-bold mx-auto mb-4">
-                    2
-                </div>
-                <h3 class="text-xl font-semibold text-gray-900 mb-2">Analyze SERP</h3>
-                <p class="text-gray-600">
-                    Our AI analyzes top search results and competitor content
-                </p>
-            </div>
-            
-            <!-- Step 3 -->
-            <div class="text-center">
-                <div class="w-16 h-16 bg-green-500 text-white rounded-full flex items-center justify-center text-2xl font-bold mx-auto mb-4">
-                    3
-                </div>
-                <h3 class="text-xl font-semibold text-gray-900 mb-2">Extract Insights</h3>
-                <p class="text-gray-600">
-                    Get entities, keywords, and content structure recommendations
-                </p>
-            </div>
-            
-            <!-- Step 4 -->
-            <div class="text-center">
-                <div class="w-16 h-16 bg-yellow-500 text-white rounded-full flex items-center justify-center text-2xl font-bold mx-auto mb-4">
-                    4
-                </div>
-                <h3 class="text-xl font-semibold text-gray-900 mb-2">Generate Content</h3>
-                <p class="text-gray-600">
-                    Receive optimized outline and schema markup ready to use
-                </p>
-            </div>
-        </div>
-    </div>
-</section>
 
-<!-- CTA Section -->
-<section class="py-20 bg-white">
-    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-        <h2 class="text-4xl font-bold text-gray-900 mb-6">
-            Ready to Create Better SEO Content?
-        </h2>
-        <p class="text-xl text-gray-600 mb-8">
-            Join thousands of content creators who are already using AI to improve their search rankings
-        </p>
-        <div class="flex flex-col sm:flex-row gap-4 justify-center">
-            <a href="/register" class="btn-primary text-white px-8 py-4 rounded-lg text-lg font-semibold inline-block">
-                Start Free Trial
-            </a>
-            <a href="/login" class="border-2 border-purple-600 text-purple-600 px-8 py-4 rounded-lg text-lg font-semibold hover:bg-purple-600 hover:text-white transition-colors">
-                Sign In
-            </a>
+            <!-- Stats -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto">
+                <div class="text-center">
+                    <div class="text-3xl font-bold text-accent mb-2">10x</div>
+                    <div class="text-gray-400">Faster Content Creation</div>
+                </div>
+                <div class="text-center">
+                    <div class="text-3xl font-bold text-accent mb-2">AI-Powered</div>
+                    <div class="text-gray-400">Entity Recognition</div>
+                </div>
+                <div class="text-center">
+                    <div class="text-3xl font-bold text-accent mb-2">Schema Ready</div>
+                    <div class="text-gray-400">JSON-LD Markup</div>
+                </div>
+            </div>
         </div>
-    </div>
-</section>
-{% endblock %}
+    </section>
+
+    <!-- Features Section -->
+    <section id="features" class="py-20 px-4">
+        <div class="max-w-7xl mx-auto">
+            <div class="text-center mb-16">
+                <h2 class="text-4xl md:text-5xl font-bold mb-6">Everything You Need for SEO Success</h2>
+                <p class="text-xl text-gray-400 max-w-3xl mx-auto">From keyword research to content creation, we've got you covered with AI-powered tools.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Feature 1 -->
+                <div class="glass-effect rounded-2xl p-8 hover:glow transition-all duration-300">
+                    <div class="w-16 h-16 bg-accent/20 rounded-2xl flex items-center justify-center mb-6">
+                        <svg class="w-8 h-8 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-4">SERP Analysis</h3>
+                    <p class="text-gray-400">Analyze top search results to understand what Google loves and what your competitors are doing.</p>
+                </div>
+
+                <!-- Feature 2 -->
+                <div class="glass-effect rounded-2xl p-8 hover:glow transition-all duration-300">
+                    <div class="w-16 h-16 bg-accent/20 rounded-2xl flex items-center justify-center mb-6">
+                        <svg class="w-8 h-8 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-4">Entity Mapping</h3>
+                    <p class="text-gray-400">Extract named entities and relationships to create content that search engines understand.</p>
+                </div>
+
+                <!-- Feature 3 -->
+                <div class="glass-effect rounded-2xl p-8 hover:glow transition-all duration-300">
+                    <div class="w-16 h-16 bg-accent/20 rounded-2xl flex items-center justify-center mb-6">
+                        <svg class="w-8 h-8 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-4">Content Outlines</h3>
+                    <p class="text-gray-400">AI-generated content structures that cover all the topics your audience wants to read about.</p>
+                </div>
+
+                <!-- Feature 4 -->
+                <div class="glass-effect rounded-2xl p-8 hover:glow transition-all duration-300">
+                    <div class="w-16 h-16 bg-accent/20 rounded-2xl flex items-center justify-center mb-6">
+                        <svg class="w-8 h-8 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01"></path>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-4">Schema Markup</h3>
+                    <p class="text-gray-400">Generate JSON-LD structured data that helps search engines understand your content better.</p>
+                </div>
+
+                <!-- Feature 5 -->
+                <div class="glass-effect rounded-2xl p-8 hover:glow transition-all duration-300">
+                    <div class="w-16 h-16 bg-accent/20 rounded-2xl flex items-center justify-center mb-6">
+                        <svg class="w-8 h-8 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-4">TF-IDF Analysis</h3>
+                    <p class="text-gray-400">Identify the most important keywords and phrases that should be included in your content.</p>
+                </div>
+
+                <!-- Feature 6 -->
+                <div class="glass-effect rounded-2xl p-8 hover:glow transition-all duration-300">
+                    <div class="w-16 h-16 bg-accent/20 rounded-2xl flex items-center justify-center mb-6">
+                        <svg class="w-8 h-8 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-4">Competitor Insights</h3>
+                    <p class="text-gray-400">Analyze what's working for your competitors and find opportunities to outperform them.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- How It Works Section -->
+    <section id="how-it-works" class="py-20 px-4 gradient-bg">
+        <div class="max-w-7xl mx-auto">
+            <div class="text-center mb-16">
+                <h2 class="text-4xl md:text-5xl font-bold mb-6">How It Works</h2>
+                <p class="text-xl text-gray-400 max-w-3xl mx-auto">Get from keyword to content in just 3 simple steps.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div class="text-center">
+                    <div class="w-20 h-20 bg-accent rounded-full flex items-center justify-center text-2xl font-bold mx-auto mb-6">1</div>
+                    <h3 class="text-xl font-semibold mb-4">Enter Your Email</h3>
+                    <p class="text-gray-400">No registration, no passwords. Just enter your email and get instant access.</p>
+                </div>
+                <div class="text-center">
+                    <div class="w-20 h-20 bg-accent rounded-full flex items-center justify-center text-2xl font-bold mx-auto mb-6">2</div>
+                    <h3 class="text-xl font-semibold mb-4">Choose Your Keyword</h3>
+                    <p class="text-gray-400">Input the main keyword or topic you want to create content about.</p>
+                </div>
+                <div class="text-center">
+                    <div class="w-20 h-20 bg-accent rounded-full flex items-center justify-center text-2xl font-bold mx-auto mb-6">3</div>
+                    <h3 class="text-xl font-semibold mb-4">Get AI-Generated Content</h3>
+                    <p class="text-gray-400">Receive a complete content outline, entity mapping, and schema markup.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="py-20 px-4">
+        <div class="max-w-4xl mx-auto text-center">
+            <h2 class="text-4xl md:text-5xl font-bold mb-6">Ready to Create Content That Ranks?</h2>
+            <p class="text-xl text-gray-400 mb-12">Join thousands of content creators who are already using AI to dominate search results.</p>
+            
+            <!-- Email Capture Form -->
+            <div class="max-w-md mx-auto">
+                <form action="/capture-email" method="POST" class="flex flex-col sm:flex-row gap-4">
+                    <input 
+                        type="email" 
+                        name="email" 
+                        placeholder="Enter your email to start" 
+                        required
+                        class="flex-1 px-6 py-4 bg-white/10 border border-white/20 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:border-accent focus:ring-2 focus:ring-accent/20 transition-all"
+                    >
+                    <button 
+                        type="submit"
+                        class="px-8 py-4 bg-accent hover:bg-accent-hover rounded-xl font-semibold transition-all duration-300 glow hover:glow-lg"
+                    >
+                        Start Creating Now
+                    </button>
+                </form>
+                <p class="text-sm text-gray-400 mt-3">Free forever • No credit card required</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="py-12 px-4 border-t border-white/10">
+        <div class="max-w-7xl mx-auto text-center">
+            <div class="flex items-center justify-center space-x-2 mb-6">
+                <div class="w-8 h-8 bg-accent rounded-lg flex items-center justify-center">
+                    <span class="text-white font-bold text-lg">AI</span>
+                </div>
+                <span class="text-xl font-bold">SEO Writer</span>
+            </div>
+            <p class="text-gray-400 mb-6">AI-powered SEO content generation for the modern web.</p>
+            <div class="text-sm text-gray-500">
+                © 2024 AI SEO Writer. All rights reserved.
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Smooth scrolling for navigation links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Add scroll effect to navigation
+        window.addEventListener('scroll', () => {
+            const nav = document.querySelector('nav');
+            if (window.scrollY > 100) {
+                nav.classList.add('bg-dark/80');
+            } else {
+                nav.classList.remove('bg-dark/80');
+            }
+        });
+    </script>
+</body>
+</html>
 
